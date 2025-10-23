@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panier GEOD</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; text-align: center; margin: 0; }
+    header { background: #111; color: #fff; padding: 20px; }
+    main { margin: 20px auto; max-width: 600px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    th, td { border: 1px solid #ddd; padding: 8px; }
+    th { background: #eee; }
+    input, textarea { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc; }
+    .row { display: flex; gap: 10px; }
+    .row .col { flex: 1; }
+    button { background: #0070ba; color: #fff; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+    button:hover { background: #005a9c; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Votre panier</h1>
+  </header>
+  <main>
+    <table id="tablePanier">
+      <thead>
+        <tr>
+          <th>Type</th><th>Modèle</th><th>Taille</th><th>Qté</th><th>Prix</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <h3 id="total"></h3>
+
+    <form id="formClient">
+      <input type="text" id="nom" placeholder="Nom" required>
+      <input type="text" id="prenom" placeholder="Prénom" required>
+      <input type="text" id="rue" placeholder="Rue" required>
+      <div class="row">
+        <div class="col"><input type="text" id="cp" maxlength="5" placeholder="Code postal" required></div>
+        <div class="col"><input type="text" id="ville" placeholder="Ville" required></div>
+      </div>
+      <input type="email" id="email" placeholder="Email" required>
+      <textarea id="remarques" placeholder="Remarques (optionnel)"></textarea>
+      <button type="submit">✅ Valider la commande</button>
+    </form>
+  </main>
+
+  <script>
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    const tbody = document.querySelector("#tablePanier tbody");
+    const totalDisplay = document.getElementById("total");
+
+    if (panier.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5">Votre panier est vide.</td></tr>';
+    } else {
+      panier.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${item.type}</td><td>${item.modele}</td><td>${item.taille || "-"}</td><td>${item.quantite}</td><td>${item.prix * item.quantite} €</td>`;
+        tbody.appendChild(tr);
+      });
+      const total = panier.reduce((sum, i) => sum + i.prix * i.quantite, 0);
+      totalDisplay.textContent = `Total : ${total} €`;
+    }
+
+    document.getElementById("formClient").addEventListener("submit", async e => {
+      e.preventDefault();
+      const client = {
+        nom: document.getElementById("nom").value,
+        prenom: document.getElementById("prenom").value,
+        rue: document.getElementById("rue").value,
+        cp: document.getElementById("cp").value,
+        ville: document.getElementById("ville").value,
+        email: document.getElementById("email").value,
+        remarques: document.getElementById("remarques").value
+      };
+
+      const data = panier.map(item => ({ ...item, ...client }));
+
+      try {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbzeijmdGNcKyFshIFpKGSRd3nyvFbMFYoyMX9CWU92uOTAFP3WSBF2mNoDMc_f7RvzHDg/exec", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+        const text = await response.text();
+
+        alert("✅ Commande validée avec succès !");
+        localStorage.removeItem("panier");
+        window.location.href = "index.html";
+      } catch (err) {
+        alert("Erreur lors de l’envoi : " + err.message);
+      }
+    });
+  </script>
+</body>
+</html>
