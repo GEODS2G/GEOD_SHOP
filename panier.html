@@ -79,7 +79,7 @@
       const data = panier.map(item => ({ ...item, ...client }));
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbzeijmdGNcKyFshIFpKGSRd3nyvFbMFYoyMX9CWU92uOTAFP3WSBF2mNoDMc_f7RvzHDg/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycby-_V38atPLpfz06CZLZlWXQIHLS-JmxXSdb2Mf0JRdMjwE9UjzIeUBNngqvA3FgC0Ceg/exec", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
