@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boutique GEOD</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      text-align: center;
+      margin: 0;
+    }
+    header {
+      background: #111;
+      color: #fff;
+      padding: 20px;
+    }
+    main {
+      margin: 20px auto;
+      max-width: 500px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    select, input {
+      width: calc(100% - 10px);
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-bottom: 8px;
+    }
+    #preview {
+      width: 100%;
+      border-radius: 10px;
+      margin: 15px 0;
+      display: none;
+    }
+    #price {
+      font-size: 22px;
+      font-weight: bold;
+      color: black;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #0070ba;
+      color: #fff;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #005a9c;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://i.imgur.com/1r7FmSt.png" alt="GEOD" style="height:80px;">
+    <h1>Boutique GEOD</h1>
+  </header>
+
+  <main>
+    <form id="formProduit">
+      <div>
+        <label for="type">Type :</label>
+        <select id="type" required>
+          <option value="">-- Choisir --</option>
+          <option value="Album CD">Album CD</option>
+          <option value="T-shirt homme">T-shirt homme</option>
+          <option value="T-shirt femme">T-shirt femme</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="modele">Modèle :</label>
+        <select id="modele" required>
+          <option value="">-- Choisir le modèle --</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="taille">Taille :</label>
+        <input id="taille" type="text" maxlength="3" placeholder="ex: M">
+      </div>
+
+      <div id="price"></div>
+      <img id="preview" src="" alt="Prévisualisation">
+
+      <button type="submit">🛒 Ajouter au panier</button>
+    </form>
+  </main>
+
+  <script>
+    const typeSelect = document.getElementById("type");
+    const modeleSelect = document.getElementById("modele");
+    const preview = document.getElementById("preview");
+    const priceDisplay = document.getElementById("price");
+
+    // 📸 Liens d’images par type + modèle
+    const data = {
+      "T-shirt homme": {
+        "GEOD couverture CD": "https://i.imgur.com/ElmFdIk.jpg",
+        "Short to ground": "https://i.imgur.com/5cDO1p3.jpg",
+        "Blue lady": "https://i.imgur.com/eTcuvEQ.jpg",
+        "Conspiracy": "https://i.imgur.com/gmlqMG4.jpg",
+        "Rattlesnake's stone": "https://i.imgur.com/dMzubO6.png",
+        "More": "https://i.imgur.com/yI4UWr7.jpg"
+      },
+      "T-shirt femme": {
+        "GEOD couverture CD": "https://i.imgur.com/qRsypOr.jpg",
+        "Short to ground": "https://i.imgur.com/qRsypOr.jpg",
+        "Blue lady": "https://i.imgur.com/4cb4Ysa.jpg",
+        "Conspiracy": "https://i.imgur.com/bzjcXWW.jpg",
+        "Rattlesnake's stone": "https://i.imgur.com/USjaozL.png",
+        "More": "https://i.imgur.com/swfdD2w.jpg"
+      },
+      "Album CD": {
+        "I.c@re": "https://i.imgur.com/0hXKAro.jpeg",
+        "Étrange Déchu": "https://i.imgur.com/V9TyjgI.jpeg",
+        "La Grande Traversée": "https://i.imgur.com/BkZldI9.jpeg",
+        "Short to Ground": "https://i.imgur.com/gRunQH7.jpeg"
+      }
+    };
+
+    typeSelect.addEventListener("change", () => {
+      const type = typeSelect.value;
+      modeleSelect.innerHTML = '<option value="">-- Choisir --</option>';
+      preview.style.display = "none";
+      priceDisplay.textContent = "";
+
+      if (!type) return;
+
+      Object.keys(data[type]).forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m;
+        opt.textContent = m;
+        modeleSelect.appendChild(opt);
+      });
+
+      document.getElementById("taille").disabled = (type === "Album CD");
+      priceDisplay.textContent = type === "Album CD" ? "10 €" : "20 €";
+    });
+
+    modeleSelect.addEventListener("change", () => {
+      const type = typeSelect.value;
+      const modele = modeleSelect.value;
+      if (type && modele) {
+        preview.src = data[type][modele];
+        preview.style.display = "block";
+      } else {
+        preview.style.display = "none";
+      }
+    });
+
+    document.getElementById("formProduit").addEventListener("submit", e => {
+      e.preventDefault();
+      const type = typeSelect.value;
+      const modele = modeleSelect.value;
+      const taille = document.getElementById("taille").value.trim();
+      const image = data[type]?.[modele];
+      const prix = type === "Album CD" ? 10 : 20;
+
+      if (!type || !modele) {
+        alert("Merci de choisir un type et un modèle");
+        return;
+      }
+
+      const article = { type, modele, taille, quantite: 1, image, prix };
+
+      const panier = JSON.parse(localStorage.getItem("panier")) || [];
+      panier.push(article);
+      localStorage.setItem("panier", JSON.stringify(panier));
+
+      alert("✅ Article ajouté au panier !");
+      window.location.href = "panier.html";
+    });
+  </script>
+</body>
+</html>
