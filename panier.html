@@ -2,189 +2,316 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panier - GEOD</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Panier - GEOD SHOP</title>
   <style>
+    :root {
+      --text-color: #fff;
+      --primary-color: #0070ba;
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.2);
+      --disabled-color: #666;
+      --empty-preview: rgba(0, 0, 0, 0.1);
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
       margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-image: url('https://i.imgur.com/2YpcV1N.jpeg');
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      color: var(--text-color);
     }
-    header {
-      background: #111;
-      color: #fff;
+
+    .form-container {
+      position: fixed;
+      top: 25vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 96%;
+      max-width: 460px;
+      background: var(--glass-bg);
+      padding: 15px;
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+      z-index: 10;
+      height: auto;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .panier-title {
       text-align: center;
-      padding: 20px;
-    }
-    main {
-      max-width: 800px;
-      margin: 20px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
       margin-bottom: 15px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-    img {
-      height: 60px;
-      border-radius: 8px;
-    }
-    button {
-      background: #0070ba;
-      color: #fff;
-      border: none;
-      padding: 12px 25px;
-      border-radius: 6px;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #005a9c;
-    }
-    .nav-button {
-      background: #555;
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      margin: 5px;
-      text-decoration: none;
-      display: inline-block;
-    }
-    .nav-button:hover {
-      background: #777;
-    }
-    .total {
       font-size: 20px;
-      text-align: right;
-      margin-top: 10px;
+      font-weight: 600;
+      color: var(--text-color);
     }
-    .error-message {
-      color: #dc3545;
-      font-size: 14px;
-      margin-top: -8px;
-      margin-bottom: 8px;
-      text-align: center;
+
+    .panier-items {
+      margin-bottom: 15px;
+      max-height: 40vh;
+      overflow-y: auto;
     }
-    form div {
+
+    .panier-item {
+      display: flex;
       margin-bottom: 10px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      align-items: center;
     }
+
+    .item-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .item-price {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .form-group {
+      flex: 1;
+    }
+
+    .type-group {
+      flex: 1.5;
+    }
+
+    .taille-group {
+      flex: 0.7;
+    }
+
     label {
       display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+      margin-bottom: 4px;
+      font-weight: 500;
+      font-size: 14px;
+      color: var(--text-color);
     }
-    input, select, textarea {
+
+    select, input, textarea {
       width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.1);
+      font-size: 14px;
+      color: var(--text-color);
       box-sizing: border-box;
     }
-    .row {
+
+    #taille {
+      width: 60px;
+      text-align: center;
+    }
+
+    #total {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary-color);
+      text-align: center;
+      margin: 15px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .buttons-row {
       display: flex;
       gap: 10px;
+      margin-top: 10px;
     }
-    .row .col {
+
+    button[type="submit"] {
       flex: 1;
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-button {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: var(--text-color);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      z-index: 20;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(0, 112, 186, 0.2);
+    }
+
+    .disabled {
+      color: var(--disabled-color);
+      background: rgba(255, 255, 255, 0.05);
+      cursor: not-allowed;
+    }
+
+    .error-message {
+      color: #ff6b6b;
+      font-size: 12px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    @media (max-width: 360px) {
+      .form-container {
+        width: 98%;
+        top: 18vh;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="https://i.imgur.com/1r7FmSt.png" alt="GEOD" style="height:80px;">
-    <h1>Votre panier</h1>
-    <div style="margin-top: 10px;">
-      <a href="index.html" class="nav-button">← Retour à la boutique</a>
+  <div class="form-container">
+    <h2 class="panier-title">Votre Panier</h2>
+
+    <div class="panier-items" id="panierItems">
+      <!-- Les articles du panier seront ajoutés ici dynamiquement -->
     </div>
-  </header>
-  <main>
-    <table id="tablePanier"></table>
-    <div class="total" id="total"></div>
-    <h3>Vos coordonnées</h3>
+
+    <div id="total">Total : 0 €</div>
+
     <form id="formClient">
-      <div>
-        <label>Nom</label>
+      <h3 style="text-align: center; margin-bottom: 15px;">Vos coordonnées</h3>
+
+      <div class="form-group full-width">
+        <label for="nom">Nom</label>
         <input id="nom" name="nom" required>
       </div>
-      <div>
-        <label>Prénom</label>
+
+      <div class="form-group full-width">
+        <label for="prenom">Prénom</label>
         <input id="prenom" name="prenom" required>
       </div>
-      <div>
-        <label>Email</label>
+
+      <div class="form-group full-width">
+        <label for="email">Email</label>
         <input id="email" type="email" name="email" required>
         <div id="emailError" class="error-message"></div>
       </div>
-      <div>
-        <label>Adresse</label>
+
+      <div class="form-group full-width">
+        <label for="rue">Adresse</label>
         <textarea id="rue" name="rue" rows="2" required></textarea>
       </div>
-      <div class="row">
-        <div class="col">
-          <label>Code postal</label>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="cp">Code postal</label>
           <input id="cp" name="cp" maxlength="5" required>
           <div id="cpError" class="error-message"></div>
         </div>
-        <div class="col">
-          <label>Ville</label>
+        <div class="form-group">
+          <label for="ville">Ville</label>
           <input id="ville" name="ville" required>
         </div>
       </div>
-      <div>
-        <label>Remarques (facultatif)</label>
+
+      <div class="form-group full-width">
+        <label for="remarques">Remarques (facultatif)</label>
         <textarea id="remarques" name="remarques" rows="2"></textarea>
       </div>
-      <button type="submit">✅ Valider la commande</button>
-    </form>
-  </main>
-  <script>
-    const panier = JSON.parse(localStorage.getItem("panier")) || [];
-    const table = document.getElementById("tablePanier");
-    const totalDiv = document.getElementById("total");
 
-    if (panier.length === 0) {
-      table.innerHTML = "<tr><td>Aucun article dans le panier.</td></tr>";
-    } else {
+      <div class="buttons-row">
+        <button type="submit">✅ Valider la commande</button>
+      </div>
+    </form>
+  </div>
+
+  <a href="index.html" class="nav-button">
+    <span>←</span>
+    <span>Retour boutique</span>
+  </a>
+
+  <script>
+    // Charger les articles du panier
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    const panierItemsContainer = document.getElementById("panierItems");
+    const totalElement = document.getElementById("total");
+
+    // Afficher les articles du panier
+    function afficherPanier() {
+      if (panier.length === 0) {
+        panierItemsContainer.innerHTML = "<p style='text-align: center;'>Votre panier est vide</p>";
+        totalElement.textContent = "Total : 0 €";
+        return;
+      }
+
       let total = 0;
-      table.innerHTML = `
-        <tr>
-          <th>Image</th>
-          <th>Type</th>
-          <th>Modèle</th>
-          <th>Taille</th>
-          <th>Qté</th>
-          <th>Prix</th>
-        </tr>
-      `;
-      panier.forEach((p, i) => {
-        total += p.prix * (p.quantite || 1);
-        table.innerHTML += `
-          <tr>
-            <td><img src="${p.image}"></td>
-            <td>${p.type}</td>
-            <td>${p.modele}</td>
-            <td>${p.taille || "-"}</td>
-            <td>${p.quantite || 1}</td>
-            <td>${p.prix * (p.quantite || 1)} €</td>
-          </tr>
+      panierItemsContainer.innerHTML = "";
+
+      panier.forEach((item, index) => {
+        const itemElement = document.createElement("div");
+        itemElement.className = "panier-item";
+
+        const prixItem = item.prix * (item.quantite || 1);
+        total += prixItem;
+
+        itemElement.innerHTML = `
+          <img src="${item.image}" class="item-image" alt="${item.modele}">
+          <div class="item-details">
+            <div class="item-name">${item.type} - ${item.modele} ${item.taille ? `(${item.taille})` : ""}</div>
+            <div>${item.quantite || 1} x ${item.prix}€ = <span class="item-price">${prixItem}€</span></div>
+          </div>
         `;
+
+        panierItemsContainer.appendChild(itemElement);
       });
-      totalDiv.textContent = "Total : " + total + " €";
+
+      totalElement.textContent = `Total : ${total} €`;
     }
 
+    // Validation du formulaire
     document.getElementById("formClient").addEventListener("submit", async e => {
       e.preventDefault();
       const nom = document.getElementById("nom").value.trim();
@@ -196,19 +323,23 @@
       const remarques = document.getElementById("remarques").value.trim();
 
       // Validation de l'email
+      const emailError = document.getElementById("emailError");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        document.getElementById("emailError").textContent = "Veuillez entrer une adresse email valide.";
+        emailError.textContent = "Veuillez entrer une adresse email valide.";
+        emailError.style.display = "block";
         return;
       } else {
-        document.getElementById("emailError").textContent = "";
+        emailError.style.display = "none";
       }
 
       // Validation du code postal
+      const cpError = document.getElementById("cpError");
       if (!/^\d{5}$/.test(cp)) {
-        document.getElementById("cpError").textContent = "Le code postal doit contenir 5 chiffres.";
+        cpError.textContent = "Le code postal doit contenir 5 chiffres.";
+        cpError.style.display = "block";
         return;
       } else {
-        document.getElementById("cpError").textContent = "";
+        cpError.style.display = "none";
       }
 
       if (panier.length === 0) {
@@ -216,47 +347,27 @@
         return;
       }
 
-      // Envoyer chaque article du panier au script Google Apps Script
-      try {
-        const scriptUrl = "https://script.google.com/macros/s/AKfycbzlJrGNuxDpEb2oistE18z87De1a5mr6DyTesREqLCA7NOc5KEF8-Y26nWDCP91qjTf/exec"; // Remplace par l'URL de ton script déployé
+      // Ajouter les informations client à chaque article
+      const data = panier.map(p => ({
+        ...p,
+        nom,
+        prenom,
+        email,
+        rue,
+        cp,
+        ville,
+        remarques
+      }));
 
-        for (const article of panier) {
-          const response = await fetch(scriptUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: new URLSearchParams({
-              nom: nom,
-              prenom: prenom,
-              email: email,
-              rue: rue,
-              cp: cp,
-              ville: ville,
-              type: article.type,
-              modele: article.modele,
-              taille: article.taille,
-              quantite: article.quantite,
-              prix: article.prix,
-              remarques: remarques
-            }).toString()
-          });
+      // Enregistrer les données dans localStorage pour la confirmation
+      localStorage.setItem("clientInfo", JSON.stringify({ nom, prenom, email, rue, cp, ville, remarques }));
 
-          if (!response.ok) {
-            throw new Error("Erreur lors de l'envoi de la commande");
-          }
-        }
-
-        // Enregistrer les données dans localStorage pour la prochaine étape
-        localStorage.setItem("clientInfo", JSON.stringify({ nom, prenom, email, rue, cp, ville, remarques }));
-
-        // Rediriger vers une page de confirmation
-        window.location.href = "confirmation.html";
-      } catch (err) {
-        alert("Erreur lors de l'envoi de la commande : " + err.message);
-        console.error(err);
-      }
+      // Rediriger vers la page de confirmation
+      window.location.href = "confirmation.html";
     });
+
+    // Charger le panier au démarrage
+    afficherPanier();
   </script>
 </body>
 </html>
