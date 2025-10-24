@@ -11,6 +11,7 @@
       --glass-bg: rgba(255, 255, 255, 0.15);
       --glass-border: rgba(255, 255, 255, 0.2);
       --disabled-color: #666;
+      --empty-preview: rgba(0, 0, 0, 0.1);
     }
 
     body {
@@ -28,11 +29,11 @@
 
     .form-container {
       position: fixed;
-      top: 22vh;
+      top: 20vh;
       left: 50%;
       transform: translateX(-50%);
-      width: 95%;
-      max-width: 450px;
+      width: 96%;
+      max-width: 460px;
       background: var(--glass-bg);
       padding: 15px;
       border-radius: 16px;
@@ -41,7 +42,6 @@
       border: 1px solid var(--glass-border);
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
       z-index: 10;
-      margin-bottom: 20px;
     }
 
     .form-row {
@@ -87,12 +87,14 @@
     }
 
     #preview-container {
-      width: 100%;
-      height: 250px; /* Hauteur maximale pour smartphone */
-      border-radius: 10px;
-      margin: 12px 0;
-      display: block;
-      background: rgba(0, 0, 0, 0.2);
+      width: calc(100% + 30px);
+      margin: 0 -15px 12px -15px;
+      height: 300px;
+      border-radius: 0 0 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--empty-preview);
       overflow: hidden;
       position: relative;
     }
@@ -101,8 +103,8 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      display: block;
-      background: rgba(0, 0, 0, 0.1);
+      display: none;
+      background: transparent;
     }
 
     #price {
@@ -166,11 +168,11 @@
     @media (max-width: 360px) {
       .form-container {
         width: 98%;
-        top: 20vh;
+        top: 18vh;
       }
 
       #preview-container {
-        height: 220px;
+        height: 250px;
       }
     }
   </style>
@@ -207,7 +209,7 @@
       </div>
 
       <div id="preview-container">
-        <img id="preview" src="https://i.imgur.com/2YpcV1N.jpeg" alt="Aperçu">
+        <img id="preview" src="" alt="Aperçu">
       </div>
 
       <div id="price"></div>
@@ -227,6 +229,7 @@
     const modeleSelect = document.getElementById("modele");
     const tailleSelect = document.getElementById("taille");
     const preview = document.getElementById("preview");
+    const previewContainer = document.getElementById("preview-container");
     const priceDisplay = document.getElementById("price");
 
     const data = {
@@ -254,12 +257,14 @@
       }
     };
 
-    // Image par défaut dans la prévisualisation
-    preview.src = "https://i.imgur.com/2YpcV1N.jpeg";
+    // Masquer l'image de prévisualisation par défaut
+    preview.style.display = "none";
 
     typeSelect.addEventListener("change", () => {
       const type = typeSelect.value;
       modeleSelect.innerHTML = '<option value="">-- Choisir --</option>';
+      preview.style.display = "none";
+      priceDisplay.textContent = "";
 
       // Gestion du champ taille
       if (type === "Album CD") {
@@ -271,11 +276,7 @@
         tailleSelect.classList.remove("disabled");
       }
 
-      if (!type) {
-        priceDisplay.textContent = "";
-        preview.src = "https://i.imgur.com/2YpcV1N.jpeg";
-        return;
-      }
+      if (!type) return;
 
       // Mettre à jour les modèles disponibles
       const modeles = Object.keys(data[type]);
@@ -293,9 +294,10 @@
 
       if (type && modele) {
         preview.src = data[type][modele].image;
+        preview.style.display = "block";
         priceDisplay.textContent = `${data[type][modele].prix} €`;
       } else {
-        preview.src = "https://i.imgur.com/2YpcV1N.jpeg";
+        preview.style.display = "none";
         priceDisplay.textContent = "";
       }
     });
