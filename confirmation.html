@@ -1,1 +1,94 @@
 
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmation - GEOD</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #0070ba;
+      color: #fff;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #005a9c;
+    }
+    .nav-button {
+      background: #555;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 5px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .nav-button:hover {
+      background: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✅ Commande confirmée</h1>
+    <p>Merci pour votre commande ! Voici un récapitulatif :</p>
+    <div id="recap"></div>
+    <p>Veuillez vous rapprocher d’un membre du staff pour finaliser le paiement.</p>
+    <div style="margin-top: 20px;">
+      <a href="index.html" class="nav-button">← Retour à la boutique</a>
+    </div>
+  </div>
+  <script>
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    const clientInfo = JSON.parse(localStorage.getItem("clientInfo")) || {};
+    const recapDiv = document.getElementById("recap");
+
+    let total = 0;
+    let html = "<h3>Articles commandés :</h3><ul>";
+    panier.forEach(p => {
+      const prixTotal = p.prix * (p.quantite || 1);
+      total += prixTotal;
+      html += `<li>${p.type} - ${p.modele} ${p.taille ? `(${p.taille})` : ""} : ${prixTotal} €</li>`;
+    });
+    html += "</ul>";
+
+    html += `<h3>Total : ${total} €</h3>`;
+    html += `<h3>Coordonnées de livraison :</h3>
+             <p>${clientInfo.prenom} ${clientInfo.nom}<br>
+             ${clientInfo.rue}<br>
+             ${clientInfo.cp} ${clientInfo.ville}<br>
+             ${clientInfo.email}</p>`;
+    if (clientInfo.remarques) {
+      html += `<p><strong>Remarques :</strong> ${clientInfo.remarques}</p>`;
+    }
+
+    recapDiv.innerHTML = html;
+
+    // Nettoyer le localStorage après confirmation
+    localStorage.removeItem("panier");
+    localStorage.removeItem("clientInfo");
+  </script>
+</body>
+</html>
