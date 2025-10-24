@@ -38,7 +38,7 @@
       height: 60px;
       border-radius: 8px;
     }
-    .main-button {
+    button {
       background: #0070ba;
       color: #fff;
       border: none;
@@ -48,7 +48,7 @@
       width: 100%;
       margin-top: 10px;
     }
-    .main-button:hover {
+    button:hover {
       background: #005a9c;
     }
     .nav-button {
@@ -71,13 +71,34 @@
       text-align: right;
       margin-top: 10px;
     }
-    .notification {
-      padding: 10px;
-      background: #4CAF50;
-      color: white;
+    .error-message {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: -8px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    form div {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
       border-radius: 6px;
-      margin: 10px 0;
-      display: none;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+    }
+    .row .col {
+      flex: 1;
     }
   </style>
 </head>
@@ -90,52 +111,53 @@
     </div>
   </header>
   <main>
-    <div id="notification" class="notification"></div>
     <table id="tablePanier"></table>
     <div class="total" id="total"></div>
     <h3>Vos coordonnées</h3>
     <form id="formClient">
-      <label>Prénom</label>
-      <input id="prenom" required>
-      <label>Nom</label>
-      <input id="nom" required>
-      <label>Adresse</label>
-      <textarea id="rue" rows="2" required></textarea>
-      <div style="display:flex; gap:10px;">
-        <div style="flex:1;">
+      <div>
+        <label>Nom</label>
+        <input id="nom" name="nom" required>
+      </div>
+      <div>
+        <label>Prénom</label>
+        <input id="prenom" name="prenom" required>
+      </div>
+      <div>
+        <label>Email</label>
+        <input id="email" type="email" name="email" required>
+        <div id="emailError" class="error-message"></div>
+      </div>
+      <div>
+        <label>Adresse</label>
+        <textarea id="rue" name="rue" rows="2" required></textarea>
+      </div>
+      <div class="row">
+        <div class="col">
           <label>Code postal</label>
-          <input id="cp" maxlength="5" required>
+          <input id="cp" name="cp" maxlength="5" required>
+          <div id="cpError" class="error-message"></div>
         </div>
-        <div style="flex:2;">
+        <div class="col">
           <label>Ville</label>
-          <input id="ville" required>
+          <input id="ville" name="ville" required>
         </div>
       </div>
-      <label>Email</label>
-      <input id="email" type="email" required>
-      <label>Remarques (facultatif)</label>
-      <textarea id="remarques" rows="2"></textarea>
-      <button type="submit" class="main-button">✅ Valider la commande</button>
+      <div>
+        <label>Remarques (facultatif)</label>
+        <textarea id="remarques" name="remarques" rows="2"></textarea>
+      </div>
+      <button type="submit">✅ Valider la commande</button>
     </form>
   </main>
   <script>
     const panier = JSON.parse(localStorage.getItem("panier")) || [];
     const table = document.getElementById("tablePanier");
     const totalDiv = document.getElementById("total");
-    const notification = document.getElementById("notification");
 
     if (panier.length === 0) {
       table.innerHTML = "<tr><td>Aucun article dans le panier.</td></tr>";
     } else {
-      const panierGrouped = panier.reduce((acc, p) => {
-        const key = `${p.type}-${p.modele}-${p.taille || ""}`;
-        if (!acc[key]) {
-          acc[key] = { ...p, quantite: 0 };
-        }
-        acc[key].quantite += p.quantite || 1;
-        return acc;
-      }, {});
-
       let total = 0;
       table.innerHTML = `
         <tr>
@@ -145,103 +167,96 @@
           <th>Taille</th>
           <th>Qté</th>
           <th>Prix</th>
-          <th>Action</th>
         </tr>
       `;
-
-      for (const key in panierGrouped) {
-        const p = panierGrouped[key];
-        total += p.prix * p.quantite;
+      panier.forEach((p, i) => {
+        total += p.prix * (p.quantite || 1);
         table.innerHTML += `
           <tr>
             <td><img src="${p.image}"></td>
             <td>${p.type}</td>
             <td>${p.modele}</td>
             <td>${p.taille || "-"}</td>
-            <td>${p.quantite}</td>
-            <td>${p.prix * p.quantite} €</td>
-            <td><button class="supprimer" data-key="${key}">❌</button></td>
+            <td>${p.quantite || 1}</td>
+            <td>${p.prix * (p.quantite || 1)} €</td>
           </tr>
         `;
-      }
-
-      totalDiv.textContent = "Total : " + total + " €";
-
-      document.querySelectorAll(".supprimer").forEach(button => {
-        button.addEventListener("click", () => {
-          const key = button.getAttribute("data-key");
-          const [type, modele, taille] = key.split("-");
-          const newPanier = panier.filter(p =>
-            !(p.type === type && p.modele === modele && p.taille === taille)
-          );
-          localStorage.setItem("panier", JSON.stringify(newPanier));
-          window.location.reload();
-        });
       });
+      totalDiv.textContent = "Total : " + total + " €";
     }
 
     document.getElementById("formClient").addEventListener("submit", async e => {
       e.preventDefault();
-      const prenom = document.getElementById("prenom").value.trim();
       const nom = document.getElementById("nom").value.trim();
+      const prenom = document.getElementById("prenom").value.trim();
+      const email = document.getElementById("email").value.trim();
       const rue = document.getElementById("rue").value.trim();
       const cp = document.getElementById("cp").value.trim();
       const ville = document.getElementById("ville").value.trim();
-      const email = document.getElementById("email").value.trim();
       const remarques = document.getElementById("remarques").value.trim();
 
-      if (!/^\d{5}$/.test(cp)) {
-        showNotification("Le code postal doit contenir 5 chiffres.", "error");
+      // Validation de l'email
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById("emailError").textContent = "Veuillez entrer une adresse email valide.";
         return;
+      } else {
+        document.getElementById("emailError").textContent = "";
       }
 
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        showNotification("Veuillez entrer une adresse email valide.", "error");
+      // Validation du code postal
+      if (!/^\d{5}$/.test(cp)) {
+        document.getElementById("cpError").textContent = "Le code postal doit contenir 5 chiffres.";
         return;
+      } else {
+        document.getElementById("cpError").textContent = "";
       }
 
       if (panier.length === 0) {
-        showNotification("Votre panier est vide !", "error");
+        alert("Votre panier est vide !");
         return;
       }
 
-      // Ajout des infos client à chaque article
-      const data = panier.map(p => ({
-        ...p,
-        prenom,
-        nom,
-        rue,
-        cp,
-        ville,
-        email,
-        remarques
-      }));
-
+      // Envoyer chaque article du panier au script Google Apps Script
       try {
-        const res = await fetch("https://script.google.com/macros/s/AKfycbyqQDqqRlam5otbxp87yr2QVTm8_NevHm2I2MRm3SpKkTx-Y-WSWHh7EagfGGtIChSLCg/exec", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
-        });
-        if (!res.ok) throw new Error("Erreur serveur");
-        showNotification("✅ Commande envoyée ! Redirection...", "success");
-        localStorage.removeItem("panier");
-        setTimeout(() => {
-          window.location.href = "merci.html";
-        }, 2000);
+        const scriptUrl = "https://script.google.com/macros/s/AKfycbzlJrGNuxDpEb2oistE18z87De1a5mr6DyTesREqLCA7NOc5KEF8-Y26nWDCP91qjTf/exec"; // Remplace par l'URL de ton script déployé
+
+        for (const article of panier) {
+          const response = await fetch(scriptUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: new URLSearchParams({
+              nom: nom,
+              prenom: prenom,
+              email: email,
+              rue: rue,
+              cp: cp,
+              ville: ville,
+              type: article.type,
+              modele: article.modele,
+              taille: article.taille,
+              quantite: article.quantite,
+              prix: article.prix,
+              remarques: remarques
+            }).toString()
+          });
+
+          if (!response.ok) {
+            throw new Error("Erreur lors de l'envoi de la commande");
+          }
+        }
+
+        // Enregistrer les données dans localStorage pour la prochaine étape
+        localStorage.setItem("clientInfo", JSON.stringify({ nom, prenom, email, rue, cp, ville, remarques }));
+
+        // Rediriger vers une page de confirmation
+        window.location.href = "confirmation.html";
       } catch (err) {
-        showNotification("Erreur lors de l'envoi : " + err.message, "error");
+        alert("Erreur lors de l'envoi de la commande : " + err.message);
+        console.error(err);
       }
     });
-
-    function showNotification(message, type) {
-      notification.textContent = message;
-      notification.style.display = "block";
-      notification.style.background = type === "error" ? "#f44336" : "#4CAF50";
-      setTimeout(() => {
-        notification.style.display = "none";
-      }, 3000);
-    }
   </script>
 </body>
 </html>
