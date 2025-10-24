@@ -12,6 +12,7 @@
       --glass-border: rgba(255, 255, 255, 0.2);
       --disabled-color: #666;
       --empty-preview: rgba(0, 0, 0, 0.1);
+      --error-color: #ff6b6b;
     }
 
     body {
@@ -29,7 +30,7 @@
 
     .form-container {
       position: fixed;
-      top: 25vh;
+      top: 20vh;
       left: 50%;
       transform: translateX(-50%);
       width: 96%;
@@ -45,6 +46,7 @@
       height: auto;
       max-height: 80vh;
       overflow-y: auto;
+      margin-bottom: 80px;
     }
 
     .panier-title {
@@ -80,34 +82,64 @@
 
     .item-details {
       flex: 1;
+      min-width: 0;
     }
 
     .item-name {
       font-weight: 500;
       margin-bottom: 4px;
+      font-size: 14px;
     }
 
     .item-price {
       color: var(--primary-color);
       font-weight: 600;
+      font-size: 14px;
+    }
+
+    .quantity-container {
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
+
+    .quantity-btn {
+      width: 24px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 4px;
+      color: var(--text-color);
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .quantity-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .quantity-input {
+      width: 40px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      border-radius: 4px;
+      margin: 0 5px;
+      padding: 4px;
+      color: var(--text-color);
     }
 
     .form-row {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       margin-bottom: 12px;
     }
 
     .form-group {
       flex: 1;
-    }
-
-    .type-group {
-      flex: 1.5;
-    }
-
-    .taille-group {
-      flex: 0.7;
     }
 
     label {
@@ -118,7 +150,7 @@
       color: var(--text-color);
     }
 
-    select, input, textarea {
+    input, textarea {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
@@ -129,9 +161,9 @@
       box-sizing: border-box;
     }
 
-    #taille {
-      width: 60px;
-      text-align: center;
+    textarea {
+      resize: none;
+      height: 40px;
     }
 
     #total {
@@ -140,73 +172,73 @@
       color: var(--primary-color);
       text-align: center;
       margin: 15px 0;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
-
-    .buttons-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    button[type="submit"] {
-      flex: 1;
-      background: var(--primary-color);
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 600;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .nav-button {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.6);
-      color: var(--text-color);
-      border: none;
-      padding: 12px 24px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-size: 15px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      z-index: 20;
-    }
-
-    select:focus, input:focus, textarea:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 2px rgba(0, 112, 186, 0.2);
-    }
-
-    .disabled {
-      color: var(--disabled-color);
-      background: rgba(255, 255, 255, 0.05);
-      cursor: not-allowed;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
     }
 
     .error-message {
-      color: #ff6b6b;
+      color: var(--error-color);
       font-size: 12px;
       margin-top: 4px;
       display: none;
+    }
+
+    .buttons-bottom {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      padding: 0 20px;
+      z-index: 20;
+    }
+
+    .bottom-button {
+      flex: 1;
+      max-width: 200px;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .return-button {
+      background: rgba(0, 0, 0, 0.6);
+      color: var(--text-color);
+      border: none;
+    }
+
+    .validate-button {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
     }
 
     @media (max-width: 360px) {
       .form-container {
         width: 98%;
         top: 18vh;
+      }
+
+      .buttons-bottom {
+        flex-direction: column;
+        padding: 0 10px;
+      }
+
+      .bottom-button {
+        max-width: none;
+        width: 100%;
+        margin-bottom: 10px;
       }
     }
   </style>
@@ -224,25 +256,26 @@
     <form id="formClient">
       <h3 style="text-align: center; margin-bottom: 15px;">Vos coordonnées</h3>
 
-      <div class="form-group full-width">
-        <label for="nom">Nom</label>
-        <input id="nom" name="nom" required>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nom">Nom</label>
+          <input id="nom" name="nom" required>
+        </div>
+        <div class="form-group">
+          <label for="prenom">Prénom</label>
+          <input id="prenom" name="prenom" required>
+        </div>
       </div>
 
-      <div class="form-group full-width">
-        <label for="prenom">Prénom</label>
-        <input id="prenom" name="prenom" required>
-      </div>
-
-      <div class="form-group full-width">
+      <div class="form-group">
         <label for="email">Email</label>
         <input id="email" type="email" name="email" required>
         <div id="emailError" class="error-message"></div>
       </div>
 
-      <div class="form-group full-width">
+      <div class="form-group">
         <label for="rue">Adresse</label>
-        <textarea id="rue" name="rue" rows="2" required></textarea>
+        <textarea id="rue" name="rue" rows="1" required></textarea>
       </div>
 
       <div class="form-row">
@@ -257,25 +290,27 @@
         </div>
       </div>
 
-      <div class="form-group full-width">
+      <div class="form-group">
         <label for="remarques">Remarques (facultatif)</label>
-        <textarea id="remarques" name="remarques" rows="2"></textarea>
-      </div>
-
-      <div class="buttons-row">
-        <button type="submit">✅ Valider la commande</button>
+        <textarea id="remarques" name="remarques" rows="1"></textarea>
       </div>
     </form>
   </div>
 
-  <a href="index.html" class="nav-button">
-    <span>←</span>
-    <span>Retour boutique</span>
-  </a>
+  <div class="buttons-bottom">
+    <a href="index.html" class="bottom-button return-button">
+      <span>←</span>
+      <span>Retour boutique</span>
+    </a>
+    <button id="validateOrder" class="bottom-button validate-button">
+      <span>✅</span>
+      <span>Valider la commande</span>
+    </button>
+  </div>
 
   <script>
     // Charger les articles du panier
-    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    let panier = JSON.parse(localStorage.getItem("panier")) || [];
     const panierItemsContainer = document.getElementById("panierItems");
     const totalElement = document.getElementById("total");
 
@@ -294,14 +329,19 @@
         const itemElement = document.createElement("div");
         itemElement.className = "panier-item";
 
-        const prixItem = item.prix * (item.quantite || 1);
+        const prixItem = item.prix * item.quantite;
         total += prixItem;
 
         itemElement.innerHTML = `
           <img src="${item.image}" class="item-image" alt="${item.modele}">
           <div class="item-details">
             <div class="item-name">${item.type} - ${item.modele} ${item.taille ? `(${item.taille})` : ""}</div>
-            <div>${item.quantite || 1} x ${item.prix}€ = <span class="item-price">${prixItem}€</span></div>
+            <div>${item.quantite} x ${item.prix}€ = <span class="item-price">${prixItem}€</span></div>
+          </div>
+          <div class="quantity-container">
+            <button type="button" class="quantity-btn minus-btn" data-index="${index}">-</button>
+            <input type="number" class="quantity-input" value="${item.quantite}" min="0" data-index="${index}" readonly>
+            <button type="button" class="quantity-btn plus-btn" data-index="${index}">+</button>
           </div>
         `;
 
@@ -309,10 +349,40 @@
       });
 
       totalElement.textContent = `Total : ${total} €`;
+
+      // Ajouter les écouteurs d'événements pour les boutons de quantité
+      document.querySelectorAll('.minus-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = parseInt(btn.getAttribute('data-index'));
+          modifierQuantite(index, -1);
+        });
+      });
+
+      document.querySelectorAll('.plus-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const index = parseInt(btn.getAttribute('data-index'));
+          modifierQuantite(index, 1);
+        });
+      });
+    }
+
+    // Fonction pour modifier la quantité
+    function modifierQuantite(index, delta) {
+      const newQuantite = panier[index].quantite + delta;
+
+      if (newQuantite <= 0) {
+        // Supprimer l'article si quantité <= 0
+        panier.splice(index, 1);
+      } else {
+        panier[index].quantite = newQuantite;
+      }
+
+      localStorage.setItem("panier", JSON.stringify(panier));
+      afficherPanier();
     }
 
     // Validation du formulaire
-    document.getElementById("formClient").addEventListener("submit", async e => {
+    document.getElementById("validateOrder").addEventListener("click", async e => {
       e.preventDefault();
       const nom = document.getElementById("nom").value.trim();
       const prenom = document.getElementById("prenom").value.trim();
@@ -347,6 +417,12 @@
         return;
       }
 
+      // Vérifier que tous les champs requis sont remplis
+      if (!nom || !prenom || !email || !rue || !cp || !ville) {
+        alert("Veuillez remplir tous les champs obligatoires.");
+        return;
+      }
+
       // Ajouter les informations client à chaque article
       const data = panier.map(p => ({
         ...p,
@@ -361,6 +437,7 @@
 
       // Enregistrer les données dans localStorage pour la confirmation
       localStorage.setItem("clientInfo", JSON.stringify({ nom, prenom, email, rue, cp, ville, remarques }));
+      localStorage.setItem("panier", JSON.stringify(panier));
 
       // Rediriger vers la page de confirmation
       window.location.href = "confirmation.html";
