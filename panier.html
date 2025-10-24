@@ -424,31 +424,43 @@
       };
 
       try {
-        // Remplace cette URL par celle de ton Google Apps Script
-        const scriptUrl = "https://script.google.com/macros/s/AKfycbzlJrGNuxDpEb2oistE18z87De1a5mr6DyTesREqLCA7NOc5KEF8-Y26nWDCP91qjTf/exec";
+  const scriptUrl = "https://script.google.com/macros/s/AKfycbzlJrGNuxDpEb2oistE18z87De1a5mr6DyTesREqLCA7NOc5KEF8-Y26nWDCP91qjTf/exec"; // Remplace par l'URL de ton déploiement
 
-        const response = await fetch(scriptUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataToSend)
-        });
+  // Préparer les données à envoyer
+  const dataToSend = {
+    client: {
+      nom: nom,
+      prenom: prenom,
+      email: email,
+      rue: rue,
+      cp: cp,
+      ville: ville,
+      remarques: remarques
+    },
+    articles: panier
+  };
 
-        if (!response.ok) {
-          throw new Error("Erreur lors de l'envoi de la commande");
-        }
+  // Envoyer les données
+  const response = await fetch(scriptUrl, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dataToSend)
+  });
 
-        // Enregistrer les données dans localStorage pour la confirmation
-        localStorage.setItem("clientInfo", JSON.stringify({ nom, prenom, email, rue, cp, ville, remarques }));
-        localStorage.setItem("panier", JSON.stringify(panier));
+  if (!response.ok) {
+    throw new Error("Erreur lors de l'envoi");
+  }
 
-        // Rediriger vers la page de confirmation
-        window.location.href = "confirmation.html";
-      } catch (err) {
-        alert("Erreur lors de l'envoi de la commande : " + err.message);
-        console.error(err);
-      }
+  // Si tout est OK, rediriger vers la confirmation
+  localStorage.setItem("clientInfo", JSON.stringify({ nom, prenom, email, rue, cp, ville, remarques }));
+  window.location.href = "confirmation.html";
+
+} catch (err) {
+  alert("Erreur lors de l'envoi de la commande: " + err.message);
+  console.error(err);
+}
     });
 
     // Charger le panier au démarrage
